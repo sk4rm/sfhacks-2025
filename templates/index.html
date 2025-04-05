@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Health Analysis</title>
+  </head>
+  <body>
+    <h1>Health Analysis and Dietary Supplement Recommendations</h1>
+
+    {% for recommendation in recommendations %}
+    <h2>Health Case #{{ recommendation.case_num }}</h2>
+    <!-- Displaying case_num -->
+
+    <h3>Recommended Dietary Supplements:</h3>
+    <ul>
+      {% for supplement in recommendation.supplements %}
+      <li>{{ supplement }}</li>
+      <!-- Each supplement is on a new line -->
+      {% endfor %}
+    </ul>
+    <hr />
+    {% endfor %}
+  </body>
+</html>
