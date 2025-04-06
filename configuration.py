@@ -1,5 +1,7 @@
 #this connects the SF2025 database cluster with the app
 import json
+import pathlib
+
 import certifi
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
@@ -18,7 +20,7 @@ db = client.SF2025
 collection = db['test3_data']
 
 # Load JSON data
-with open('/Users/hlathirinaing/CS/GitHub/sfhacks-2025/database/data.json', 'r') as file:
+with open(pathlib.Path(__file__).parent / "database" / "data.json", 'r') as file:
     file_data = json.load(file)
 
 # Update documents in the collection
