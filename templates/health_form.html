@@ -433,7 +433,10 @@
             const jsonData = JSON.stringify(formData, null, 2);
             console.log(jsonData);
             fetch("/", { method: "POST", headers: { "Content-Type": "application/json" }, body: jsonData })
-                .then(() => alert('Form data has been converted to JSON. Check console for details.'));
+                .then(() => {
+
+                    window.location.assign("recommendations/{{ last_id + 1}}")
+                });
         });
     </script>
 </body>

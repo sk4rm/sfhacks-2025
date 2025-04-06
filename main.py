@@ -59,6 +59,13 @@ async def get_recommendations(request: Request, id: int):
     Fetches health data for a specific user_id from MongoDB, generates supplement recommendations
     using Gemini AI, and renders an HTML page with the recommendations.
     """
+    # Create a new client and connect to the server
+    client = MongoClient(os.getenv("MONGODB_KEY"), tlsCAFile=certifi.where(), server_api=ServerApi('1'))
+
+    # create database and the collection
+    db = client.SF2025
+    collection = db['test3_data']
+
     try:
         # Fetch data for the specific user_id from the MongoDB collection
         health_case = collection.find_one({"id": id}, {"_id": 0})  # Exclude the _id field if not needed
