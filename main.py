@@ -1,3 +1,5 @@
+import pathlib
+
 from fastapi import FastAPI, APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -26,7 +28,7 @@ model = genai.GenerativeModel("gemini-2.0-flash")
 
 # Initialize FastAPI app and set up Jinja2 templates (adjust templates directory as needed)
 app = FastAPI()
-templates = Jinja2Templates(directory="/Users/hlathirinaing/CS/GitHub/sfhacks-2025/templates")
+templates = Jinja2Templates(directory=pathlib.Path(__file__).parent / "templates")
 router = APIRouter()
 app.include_router(router)
 # ---------------- Gemini Functionality ----------------
