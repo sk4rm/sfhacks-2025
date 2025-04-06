@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Metrics Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .form-section h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .sub-section {
+            margin-left: 20px;
+            padding-left: 15px;
+            border-left: 2px solid #eee;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Health Metrics Form</h1>
+    <form id="healthMetricsForm">
+        <div class="form-section">
+            <h2>Basic Information</h2>
+            <div class="form-group">
+                <label for="id">ID:</label>
+                <input type="number" id="id" name="id" value="3" readonly>
+            </div>
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" value="Liam O'Connor">
+            </div>
+            <div class="form-group">
+                <label for="age">Age:</label>
+                <input type="number" id="age" name="age" value="67">
+            </div>
+            <div class="form-group">
+                <label for="height">Height (cm):</label>
+                <input type="number" id="height" name="height" step="0.1" value="180.4">
+            </div>
+            <div class="form-group">
+                <label for="weight">Weight (kg):</label>
+                <input type="number" id="weight" name="weight" step="0.1" value="85.6">
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2>Activity Metrics</h2>
+            <div class="form-group">
+                <label for="calories_burned">Calories Burned:</label>
+                <input type="number" id="calories_burned" name="health_metrics.calories_burned" value="1580">
+            </div>
+            <div class="form-group">
+                <label for="step_count">Step Count:</label>
+                <input type="number" id="step_count" name="health_metrics.step_count" value="4320">
+            </div>
+            <div class="form-group">
+                <label for="walking_running_distance">Walking/Running Distance (km):</label>
+                <input type="number" id="walking_running_distance" name="health_metrics.walking_running_distance" step="0.1" value="2.3">
+            </div>
+            <div class="form-group">
+                <label for="stairs_climbed">Stairs Climbed (flights):</label>
+                <input type="number" id="stairs_climbed" name="health_metrics.stairs_climbed" value="6">
+            </div>
+            <div class="form-group">
+                <label for="vo2_max">VO2 Max:</label>
+                <input type="number" id="vo2_max" name="health_metrics.vo2_max" step="0.1" value="28.9">
+            </div>
+            <div class="form-group">
+                <label for="one_minute_heart_rate_recovery">1-min Heart Rate Recovery:</label>
+                <input type="number" id="one_minute_heart_rate_recovery" name="health_metrics.one_minute_heart_rate_recovery" step="0.1" value="32.1">
+            </div>
+            <div class="form-group">
+                <label for="standing_hours">Standing Hours:</label>
+                <input type="number" id="standing_hours" name="health_metrics.standing_hours" step="0.1" value="8.2">
+            </div>
+            <div class="form-group">
+                <label for="swimming_distance">Swimming Distance (km):</label>
+                <input type="number" id="swimming_distance" name="health_metrics.swimming_distance" step="0.1" value="0.8">
+            </div>
+            <div class="form-group">
+                <label for="swimming_strokes">Swimming Strokes:</label>
+                <input type="number" id="swimming_strokes" name="health_metrics.swimming_strokes" step="0.1" value="220.0">
+            </div>
+            <div class="form-group">
+                <label for="wheelchair_distance">Wheelchair Distance (km):</label>
+                <input type="number" id="wheelchair_distance" name="health_metrics.wheelchair_distance" step="0.1" value="3.5">
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2>Body Measurements</h2>
+            <div class="form-group">
+                <label for="basal_body_temperature">Basal Body Temperature (°C):</label>
+                <input type="number" id="basal_body_temperature" name="health_metrics.basal_body_temperature" step="0.1" value="36.3">
+            </div>
+            <div class="form-group">
+                <label for="body_fat_percentage">Body Fat Percentage:</label>
+                <input type="number" id="body_fat_percentage" name="health_metrics.body_fat_percentage" step="0.1" value="28.4">
+            </div>
+            <div class="form-group">
+                <label for="body_mass_index">Body Mass Index:</label>
+                <input type="number" id="body_mass_index" name="health_metrics.body_mass_index" step="0.1" value="26.3">
+            </div>
+            <div class="form-group">
+                <label for="body_temperature">Body Temperature (°C):</label>
+                <input type="number" id="body_temperature" name="health_metrics.body_temperature" step="0.1" value="36.5">
+            </div>
+            <div class="form-group">
+                <label for="electrodermal_activity">Electrodermal Activity:</label>
+                <input type="number" id="electrodermal_activity" name="health_metrics.electrodermal_activity" step="0.1" value="1.2">
+            </div>
+            <div class="form-group">
+                <label for="lean_body_mass">Lean Body Mass (kg):</label>
+                <input type="number" id="lean_body_mass" name="health_metrics.lean_body_mass" step="0.1" value="61.3">
+            </div>
+            <div class="form-group">
+                <label for="waist_circumference">Waist Circumference (cm):</label>
+                <input type="number" id="waist_circumference" name="health_metrics.waist_circumference" step="0.1" value="94.0">
+            </div>
+            <div class="form-group">
+                <label for="wrist_temperature">Wrist Temperature (°C):</label>
+                <input type="number" id="wrist_temperature" name="health_metrics.wrist_temperature" step="0.1" value="35.8">
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2>Vital Signs</h2>
+            <div class="form-group">
+                <label for="blood_glucose">Blood Glucose (mmol/L):</label>
+                <input type="number" id="blood_glucose" name="health_metrics.blood_glucose" step="0.1" value="6.2">
+            </div>
+            <div class="form-group">
+                <label for="blood_oxygen">Blood Oxygen (%):</label>
+                <input type="number" id="blood_oxygen" name="health_metrics.blood_oxygen" step="0.1" value="95.8">
+            </div>
+            <div class="form-group">
+                <label for="blood_pressure_systolic">Blood Pressure - Systolic (mmHg):</label>
+                <input type="number" id="blood_pressure_systolic" name="health_metrics.blood_pressure.systolic" step="0.1" value="135.0">
+            </div>
+            <div class="form-group">
+                <label for="blood_pressure_diastolic">Blood Pressure - Diastolic (mmHg):</label>
+                <input type="number" id="blood_pressure_diastolic" name="health_metrics.blood_pressure.diastolic" step="0.1" value="88.0">
+            </div>
+            <div class="form-group">
+                <label for="blood_temperature">Blood Temperature (°C):</label>
+                <input type="number" id="blood_temperature" name="health_metrics.blood_temperature" step="0.1" value="36.4">
+            </div>
+            <div class="form-group">
+                <label for="heart_rate_bpm">Heart Rate (bpm):</label>
+                <input type="number" id="heart_rate_bpm" name="health_metrics.heart_rate_bpm" step="0.1" value="76.0">
+            </div>
+            <div class="form-group">
+                <label for="respiratory_rate">Respiratory Rate (breaths/min):</label>
+                <input type="number" id="respiratory_rate" name="health_metrics.respiratory_rate" value="18.0">
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2>Vision Prescription</h2>
+            <div class="form-group">
+                <label for="lens_type">Lens Type:</label>
+                <select id="lens_type" name="health_metrics.vision_prescription.lens_type">
+                    <option value="glasses" selected>Glasses</option>
+                    <option value="contacts">Contacts</option>
+                    <option value="none">None</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="date_issued">Date Issued:</label>
+                <input type="date" id="date_issued" name="health_metrics.vision_prescription.date_issued" value="2022-11-10">
+            </div>
+            <div class="sub-section">
+                <h3>Right Eye</h3>
+                <div class="form-group">
+                    <label for="right_sphere">Sphere:</label>
+                    <input type="number" id="right_sphere" name="health_metrics.vision_prescription.right_sphere" step="0.1" value="-2.0">
+                </div>
+                <div class="form-group">
+                    <label for="right_cylinder">Cylinder:</label>
+                    <input type="number" id="right_cylinder" name="health_metrics.vision_prescription.right_cylinder" step="0.1" value="-1.0">
+                </div>
+                <div class="form-group">
+                    <label for="right_axis">Axis:</label>
+                    <input type="number" id="right_axis" name="health_metrics.vision_prescription.right_axis" step="0.1" value="175.0">
+                </div>
+                <div class="form-group">
+                    <label for="right_pupillary_distance">Pupillary Distance (mm):</label>
+                    <input type="number" id="right_pupillary_distance" name="health_metrics.vision_prescription.right_pupillary_distance" step="0.1" value="33.0">
+                </div>
+                <div class="form-group">
+                    <label for="right_vertex">Vertex (mm):</label>
+                    <input type="number" id="right_vertex" name="health_metrics.vision_prescription.right_vertex" step="0.1" value="14.0">
+                </div>
+                <div class="form-group">
+                    <label for="right_prism">Prism:</label>
+                    <input type="number" id="right_prism" name="health_metrics.vision_prescription.right_prism" step="0.1" value="1.5">
+                </div>
+            </div>
+            <div class="sub-section">
+                <h3>Left Eye</h3>
+                <div class="form-group">
+                    <label for="left_sphere">Sphere:</label>
+                    <input type="number" id="left_sphere" name="health_metrics.vision_prescription.left_sphere" step="0.1" value="-2.5">
+                </div>
+                <div class="form-group">
+                    <label for="left_cylinder">Cylinder:</label>
+                    <input type="number" id="left_cylinder" name="health_metrics.vision_prescription.left_cylinder" step="0.1" value="-0.5">
+                </div>
+                <div class="form-group">
+                    <label for="left_axis">Axis:</label>
+                    <input type="number" id="left_axis" name="health_metrics.vision_prescription.left_axis" step="0.1" value="165.0">
+                </div>
+                <div class="form-group">
+                    <label for="left_pupillary_distance">Pupillary Distance (mm):</label>
+                    <input type="number" id="left_pupillary_distance" name="health_metrics.vision_prescription.left_pupillary_distance" step="0.1" value="33.0">
+                </div>
+                <div class="form-group">
+                    <label for="left_vertex">Vertex (mm):</label>
+                    <input type="number" id="left_vertex" name="health_metrics.vision_prescription.left_vertex" step="0.1" value="14.0">
+                </div>
+                <div class="form-group">
+                    <label for="left_prism">Prism:</label>
+                    <input type="number" id="left_prism" name="health_metrics.vision_prescription.left_prism" step="0.1" value="1.0">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2>Nutrition</h2>
+            <div class="form-group">
+                <label for="biotin">Biotin (mcg):</label>
+                <input type="number" id="biotin" name="health_metrics.nutrition.biotin" step="0.1" value="50.0">
+            </div>
+            <div class="form-group">
+                <label for="caffeine">Caffeine (mg):</label>
+                <input type="number" id="caffeine" name="health_metrics.nutrition.caffeine" step="0.1" value="25.0">
+            </div>
+            <div class="form-group">
+                <label for="calcium">Calcium (mg):</label>
+                <input type="number" id="calcium" name="health_metrics.nutrition.calcium" step="0.1" value="1200.0">
+            </div>
+            <div class="form-group">
+                <label for="carbohydrates">Carbohydrates (g):</label>
+                <input type="number" id="carbohydrates" name="health_metrics.nutrition.carbohydrates" step="0.1" value="150.0">
+            </div>
+            <div class="form-group">
+                <label for="chloride">Chloride (mg):</label>
+                <input type="number" id="chloride" name="health_metrics.nutrition.chloride" step="0.1" value="2800.0">
+            </div>
+            <div class="form-group">
+                <label for="chromium">Chromium (mcg):</label>
+                <input type="number" id="chromium" name="health_metrics.nutrition.chromium" step="0.1" value="20.0">
+            </div>
+            <div class="form-group">
+                <label for="copper">Copper (mg):</label>
+                <input type="number" id="copper" name="health_metrics.nutrition.copper" step="0.1" value="0.7">
+            </div>
+            <div class="form-group">
+                <label for="protein">Protein (g):</label>
+                <input type="number" id="protein" name="health_metrics.nutrition.protein" step="0.1" value="70.0">
+            </div>
+            <div class="form-group">
+                <label for="vitamin_a">Vitamin A (mcg):</label>
+                <input type="number" id="vitamin_a" name="health_metrics.nutrition.vitamin_a" step="0.1" value="800.0">
+            </div>
+            <div class="form-group">
+                <label for="vitamin_b6">Vitamin B6 (mg):</label>
+                <input type="number" id="vitamin_b6" name="health_metrics.nutrition.vitamin_b6" step="0.1" value="2.0">
+            </div>
+            <div class="form-group">
+                <label for="vitamin_b12">Vitamin B12 (mcg):</label>
+                <input type="number" id="vitamin_b12" name="health_metrics.nutrition.vitamin_b12" step="0.1" value="4.0">
+            </div>
+            <div class="form-group">
+                <label for="vitamin_c">Vitamin C (mg):</label>
+                <input type="number" id="vitamin_c" name="health_metrics.nutrition.vitamin_c" step="0.1" value="100.0">
+            </div>
+            <div class="form-group">
+                <label for="vitamin_d">Vitamin D (mcg):</label>
+                <input type="number" id="vitamin_d" name="health_metrics.nutrition.vitamin_d" step="0.1" value="25.0">
+            </div>
+            <div class="form-group">
+                <label for="vitamin_e">Vitamin E (mg):</label>
+                <input type="number" id="vitamin_e" name="health_metrics.nutrition.vitamin_e" step="0.1" value="20.0">
+            </div>
+            <div class="form-group">
+                <label for="vitamin_k">Vitamin K (mcg):</label>
+                <input type="number" id="vitamin_k" name="health_metrics.nutrition.vitamin_k" step="0.1" value="80.0">
+            </div>
+            <div class="form-group">
+                <label for="water">Water (ml):</label>
+                <input type="number" id="water" name="health_metrics.nutrition.water" step="0.1" value="2500.0">
+            </div>
+            <div class="form-group">
+                <label for="zinc">Zinc (mg):</label>
+                <input type="number" id="zinc" name="health_metrics.nutrition.zinc" step="0.1" value="8.0">
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2>Sleep</h2>
+            <div class="form-group">
+                <label for="average_sleep_hours">Average Sleep Hours:</label>
+                <input type="number" id="average_sleep_hours" name="health_metrics.average_sleep_hours" step="0.1" value="6.0">
+            </div>
+        </div>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        document.getElementById('healthMetricsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Create form data object
+            const formData = {
+                id: parseInt(document.getElementById('id').value),
+                name: document.getElementById('name').value,
+                age: parseInt(document.getElementById('age').value),
+                height: parseFloat(document.getElementById('height').value),
+                weight: parseFloat(document.getElementById('weight').value),
+                health_metrics: {
+                    calories_burned: parseInt(document.getElementById('calories_burned').value),
+                    step_count: parseInt(document.getElementById('step_count').value),
+                    walking_running_distance: parseFloat(document.getElementById('walking_running_distance').value),
+                    stairs_climbed: parseInt(document.getElementById('stairs_climbed').value),
+                    vo2_max: parseFloat(document.getElementById('vo2_max').value),
+                    one_minute_heart_rate_recovery: parseFloat(document.getElementById('one_minute_heart_rate_recovery').value),
+                    standing_hours: parseFloat(document.getElementById('standing_hours').value),
+                    swimming_distance: parseFloat(document.getElementById('swimming_distance').value),
+                    swimming_strokes: parseFloat(document.getElementById('swimming_strokes').value),
+                    wheelchair_distance: parseFloat(document.getElementById('wheelchair_distance').value),
+                    basal_body_temperature: parseFloat(document.getElementById('basal_body_temperature').value),
+                    body_fat_percentage: parseFloat(document.getElementById('body_fat_percentage').value),
+                    body_mass_index: parseFloat(document.getElementById('body_mass_index').value),
+                    body_temperature: parseFloat(document.getElementById('body_temperature').value),
+                    electrodermal_activity: parseFloat(document.getElementById('electrodermal_activity').value),
+                    lean_body_mass: parseFloat(document.getElementById('lean_body_mass').value),
+                    waist_circumference: parseFloat(document.getElementById('waist_circumference').value),
+                    wrist_temperature: parseFloat(document.getElementById('wrist_temperature').value),
+                    blood_glucose: parseFloat(document.getElementById('blood_glucose').value),
+                    blood_oxygen: parseFloat(document.getElementById('blood_oxygen').value),
+                    blood_pressure: {
+                        systolic: parseFloat(document.getElementById('blood_pressure_systolic').value),
+                        diastolic: parseFloat(document.getElementById('blood_pressure_diastolic').value)
+                    },
+                    blood_temperature: parseFloat(document.getElementById('blood_temperature').value),
+                    heart_rate_bpm: parseFloat(document.getElementById('heart_rate_bpm').value),
+                    respiratory_rate: parseFloat(document.getElementById('respiratory_rate').value),
+                    vision_prescription: {
+                        lens_type: document.getElementById('lens_type').value,
+                        date_issued: document.getElementById('date_issued').value,
+                        right_sphere: parseFloat(document.getElementById('right_sphere').value),
+                        left_sphere: parseFloat(document.getElementById('left_sphere').value),
+                        right_cylinder: parseFloat(document.getElementById('right_cylinder').value),
+                        left_cylinder: parseFloat(document.getElementById('left_cylinder').value),
+                        right_axis: parseFloat(document.getElementById('right_axis').value),
+                        left_axis: parseFloat(document.getElementById('left_axis').value),
+                        right_pupillary_distance: parseFloat(document.getElementById('right_pupillary_distance').value),
+                        left_pupillary_distance: parseFloat(document.getElementById('left_pupillary_distance').value),
+                        right_vertex: parseFloat(document.getElementById('right_vertex').value),
+                        left_vertex: parseFloat(document.getElementById('left_vertex').value),
+                        right_prism: parseFloat(document.getElementById('right_prism').value),
+                        left_prism: parseFloat(document.getElementById('left_prism').value)
+                    },
+                    nutrition: {
+                        biotin: parseFloat(document.getElementById('biotin').value),
+                        caffeine: parseFloat(document.getElementById('caffeine').value),
+                        calcium: parseFloat(document.getElementById('calcium').value),
+                        carbohydrates: parseFloat(document.getElementById('carbohydrates').value),
+                        chloride: parseFloat(document.getElementById('chloride').value),
+                        chromium: parseFloat(document.getElementById('chromium').value),
+                        copper: parseFloat(document.getElementById('copper').value),
+                        protein: parseFloat(document.getElementById('protein').value),
+                        vitamin_a: parseFloat(document.getElementById('vitamin_a').value),
+                        vitamin_b6: parseFloat(document.getElementById('vitamin_b6').value),
+                        vitamin_b12: parseFloat(document.getElementById('vitamin_b12').value),
+                        vitamin_c: parseFloat(document.getElementById('vitamin_c').value),
+                        vitamin_d: parseFloat(document.getElementById('vitamin_d').value),
+                        vitamin_e: parseFloat(document.getElementById('vitamin_e').value),
+                        vitamin_k: parseFloat(document.getElementById('vitamin_k').value),
+                        water: parseFloat(document.getElementById('water').value),
+                        zinc: parseFloat(document.getElementById('zinc').value)
+                    },
+                    average_sleep_hours: parseFloat(document.getElementById('average_sleep_hours').value)
+                }
+            };
+
+            // Convert to JSON and display (in a real app, you would send this to a server)
+            const jsonData = JSON.stringify(formData, null, 2);
+            console.log(jsonData);
+            alert('Form data has been converted to JSON. Check console for details.');
+        });
+    </script>
+</body>
+</html>

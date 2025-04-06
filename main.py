@@ -60,7 +60,7 @@ async def get_recommendations(request: Request, id: int):
         # Fetch data for the specific user_id from the MongoDB collection
         health_case = collection.find_one({"id": id}, {"_id": 0})  # Exclude the _id field if not needed
         if not health_case:
-            raise HTTPException(status_code=404, detail=f"No data found for user_id {user_id}.")
+            raise HTTPException(status_code=404, detail=f"No data found for user_id {id}.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching data from MongoDB: {e}")
 
@@ -205,13 +205,20 @@ async def delete_task(task_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Task deletion failed: {e}")
 
+
+@router.get("/")
+async def root(request: Request):
+    print("root called")
+    return templates.TemplateResponse("health_form.html", {"request": request})
+
+
 # Include the MongoDB router in the main FastAPI app
 app.include_router(router)
 
 # ---------------- Application Startup ----------------
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
 
 
 #------------------------------------------------------------------------------------------------------------------------
