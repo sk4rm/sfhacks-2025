@@ -208,7 +208,6 @@ async def delete_task(task_id: str):
 
 @router.get("/")
 async def root(request: Request):
-    print("root called")
     return templates.TemplateResponse("health_form.html", {"request": request})
 
 
