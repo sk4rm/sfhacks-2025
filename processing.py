@@ -1,3 +1,4 @@
+import json
 import os
 import pathlib
 
@@ -5,7 +6,7 @@ from dotenv import load_dotenv
 from google import genai
 import xml.etree.ElementTree as ET
 
-from models import DailyAverageRecord
+from models import default_encoder, DailyAverageRecord
 
 load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -41,9 +42,7 @@ def generate_json(xml_in, json_out):
         daily_averages[key].update(float(value))
 
     with open(json_out, "w") as outfile:
-        output = ""
-        for key in daily_averages.keys():
-            output += f"{daily_averages[key]}\n"
+        output = json.dumps(daily_averages, default=default_encoder, indent=4)
         outfile.write(output)
 
 
@@ -79,7 +78,7 @@ def gemini_suggest(json_path, api_key=GEMINI_API_KEY):
 
 if __name__ == "__main__":
     xml_path = pathlib.Path(__file__).parent / "data" / "export" / "apple_health_export" / "export.xml"
-    json_path = pathlib.Path(__file__).parent / "data" / "data.txt"
+    json_path = pathlib.Path(__file__).parent / "data" / "data.json"
 
     with open(xml_path, "r") as file:
         generate_json(
@@ -87,4 +86,4 @@ if __name__ == "__main__":
             json_out=json_path
         )
 
-        gemini_suggest(json_path, api_key=GEMINI_API_KEY)
+        # gemini_suggest(json_path, api_key=GEMINI_API_KEY)
