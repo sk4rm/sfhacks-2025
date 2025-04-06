@@ -1,5 +1,7 @@
 import pathlib
+from typing import Dict, Any
 
+import certifi
 from fastapi import FastAPI, APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -8,9 +10,10 @@ import json
 import re, os
 from datetime import datetime
 from bson.objectid import ObjectId
+from pymongo import MongoClient
+from pymongo.server_api import ServerApi
 
 # MongoDB related imports (ensure these are set up correctly in your project)
-from configuration import collection
 from database.schemas import all_tasks
 from database.models import Todo
 
@@ -208,7 +211,37 @@ async def delete_task(task_id: str):
 
 @router.get("/")
 async def root(request: Request):
-    return templates.TemplateResponse("health_form.html", {"request": request})
+    client = MongoClient(os.getenv("MONGODB_KEY"), tlsCAFile=certifi.where(), server_api=ServerApi('1'))
+
+    # create database and the collection
+    db = client.SF2025
+    collection = db['test3_data']
+    cursor = collection.find().sort({ "id": -1 }).limit(1)
+    last_id = cursor.next()["id"]
+    return templates.TemplateResponse("health_form.html", {"request": request, "last_id": last_id})
+
+
+@router.post("/")
+async def submit_health_form(form_data: Dict[Any, Any]):
+    # Create a new client and connect to the server
+    client = MongoClient(os.getenv("MONGODB_KEY"), tlsCAFile=certifi.where(), server_api=ServerApi('1'))
+
+    # create database and the collection
+    db = client.SF2025
+    collection = db['test3_data']
+
+    # Load JSON data
+    with open(pathlib.Path(__file__).parent / "database" / "data.json", 'r') as file:
+        file_data = json.load(file)
+
+    # Update documents in the collection
+    for document in file_data:
+        # Assuming 'id' is the unique identifier for each document
+        identifier = document['id']
+        # This will replace the document with the same id or insert a new one if it doesn't exist
+        collection.replace_one({'id': identifier}, document, upsert=True)
+
+    return form_data
 
 
 # Include the MongoDB router in the main FastAPI app

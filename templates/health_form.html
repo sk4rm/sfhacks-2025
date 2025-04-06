@@ -66,7 +66,7 @@
             <h2>Basic Information</h2>
             <div class="form-group">
                 <label for="id">ID:</label>
-                <input type="number" id="id" name="id" value="3" readonly>
+                <input type="number" id="id" name="id" value="{{ last_id + 1 }}" readonly>
             </div>
             <div class="form-group">
                 <label for="name">Name:</label>
@@ -432,7 +432,8 @@
             // Convert to JSON and display (in a real app, you would send this to a server)
             const jsonData = JSON.stringify(formData, null, 2);
             console.log(jsonData);
-            alert('Form data has been converted to JSON. Check console for details.');
+            fetch("/", { method: "POST", headers: { "Content-Type": "application/json" }, body: jsonData })
+                .then(() => alert('Form data has been converted to JSON. Check console for details.'));
         });
     </script>
 </body>
