@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dietary Supplement Recommendation Questionnaire</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #E3F2FD; /* Pastel light blue background */
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 20px 30px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #1A237E; /* Dark blue for contrast */
+      margin-bottom: 30px;
+    }
+    fieldset {
+      border: 1px solid #90CAF9; /* Pastel blue border */
+      margin: 20px 0;
+      padding: 15px;
+      border-radius: 5px;
+    }
+    legend {
+      font-weight: bold;
+      padding: 0 10px;
+      color: #1A237E;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #90CAF9;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    input[type="radio"],
+    input[type="checkbox"] {
+      margin-right: 5px;
+    }
+    button {
+      display: block;
+      margin: 30px auto;
+      padding: 10px 30px;
+      font-size: 16px;
+      border: none;
+      background-color: #90CAF9; /* Pastel blue button */
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #64B5F6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Dietary Supplement Recommendation Questionnaire</h1>
+    <form id="healthForm" action="/submit_health_form" method="POST">
+      <fieldset>
+        <legend>Personal Information</legend>
+        <div class="form-group">
+          <label for="age">Age:</label>
+          <input type="number" id="age" name="age" required />
+        </div>
+        <div class="form-group">
+          <label for="gender">Gender:</label>
+          <select id="gender" name="gender" required>
+            <option value="">Select your gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="non-binary">Non-binary</option>
+            <option value="prefer-not-to-say">Prefer not to say</option>
+          </select>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Health & Medical History</legend>
+        <div class="form-group">
+          <label for="medical-conditions">Medical Conditions:</label>
+          <textarea id="medical-conditions" name="medical_conditions" rows="3" placeholder="List any medical conditions or chronic health issues"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="medications">Medications & Supplements:</label>
+          <textarea id="medications" name="medications" rows="3" placeholder="List any prescription medications or supplements you are currently taking"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="allergies">Allergies & Sensitivities:</label>
+          <textarea id="allergies" name="allergies" rows="2" placeholder="List any allergies or sensitivities"></textarea>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Lifestyle & Diet</legend>
+        <div class="form-group">
+          <label for="dietary-habits">Dietary Habits:</label>
+          <select id="dietary-habits" name="dietary_habits" required>
+            <option value="">Select your dietary habits</option>
+            <option value="omnivorous">Omnivorous</option>
+            <option value="vegetarian">Vegetarian</option>
+            <option value="vegan">Vegan</option>
+            <option value="pescatarian">Pescatarian</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Physical Activity Level:</label>
+          <input type="radio" id="sedentary" name="activity_level" value="sedentary" required />
+          <label for="sedentary" style="display:inline;">Sedentary</label><br />
+          <input type="radio" id="lightly-active" name="activity_level" value="lightly_active" />
+          <label for="lightly-active" style="display:inline;">Lightly Active</label><br />
+          <input type="radio" id="moderately-active" name="activity_level" value="moderately_active" />
+          <label for="moderately-active" style="display:inline;">Moderately Active</label><br />
+          <input type="radio" id="very-active" name="activity_level" value="very_active" />
+          <label for="very-active" style="display:inline;">Very Active</label>
+        </div>
+        <div class="form-group">
+          <label for="substance-use">Substance Use:</label>
+          <textarea id="substance-use" name="substance_use" rows="2" placeholder="Describe your smoking or alcohol consumption habits"></textarea>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Health Goals & Concerns</legend>
+        <div class="form-group">
+          <label for="primary-goals">Primary Health Goals:</label>
+          <textarea id="primary-goals" name="primary_goals" rows="3" placeholder="What are your primary health and wellness goals?"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="nutritional-deficiencies">Nutritional Deficiencies:</label>
+          <textarea id="nutritional-deficiencies" name="nutritional_deficiencies" rows="2" placeholder="List any known nutritional deficiencies"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="specific-symptoms">Specific Symptoms:</label>
+          <textarea id="specific-symptoms" name="specific_symptoms" rows="3" placeholder="Describe any symptoms such as fatigue, poor sleep, or stress"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="expectations">Expectations from Supplements:</label>
+          <textarea id="expectations" name="expectations" rows="3" placeholder="What are your expectations from dietary supplements?"></textarea>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Additional Information</legend>
+        <div class="form-group">
+          <label for="dietary-restrictions">Dietary Restrictions:</label>
+          <textarea id="dietary-restrictions" name="dietary_restrictions" rows="2" placeholder="List any dietary restrictions (e.g., gluten-free, dairy-free)"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="hydration">Daily Water Intake (in cups or liters):</label>
+          <input type="text" id="hydration" name="hydration" placeholder="e.g., 8 cups or 2 liters" />
+        </div>
+        <div class="form-group">
+          <label for="other-details">Other Relevant Details:</label>
+          <textarea id="other-details" name="other_details" rows="3" placeholder="Any additional information about your lifestyle or health"></textarea>
+        </div>
+      </fieldset>
+
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+  <script>
+    document.getElementById('healthForm').addEventListener('submit', async function (e) {
+      e.preventDefault(); // Prevent the default form submission
+
+      // Collect form data
+      const formData = {
+        age: parseInt(document.getElementById('age').value),
+        gender: document.getElementById('gender').value,
+        medical_conditions: document.getElementById('medical-conditions').value,
+        medications: document.getElementById('medications').value,
+        allergies: document.getElementById('allergies').value,
+        dietary_habits: document.getElementById('dietary-habits').value,
+        activity_level: document.querySelector('input[name="activity_level"]:checked').value,
+        substance_use: document.getElementById('substance-use').value,
+        primary_goals: document.getElementById('primary-goals').value,
+        nutritional_deficiencies: document.getElementById('nutritional-deficiencies').value,
+        specific_symptoms: document.getElementById('specific-symptoms').value,
+        expectations: document.getElementById('expectations').value,
+        dietary_restrictions: document.getElementById('dietary-restrictions').value,
+        hydration: document.getElementById('hydration').value,
+        other_details: document.getElementById('other-details').value
+      };
+
+      // Send the data as JSON to the backend
+      try {
+        const response = await fetch('/submit_health_form', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+          alert('Form submitted successfully! Redirecting to recommendations...');
+          window.location.href = '/recommendations';
+        } else {
+          const result = await response.json();
+          alert(`Error: ${result.detail}`);
+        }
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        alert('An error occurred while submitting the form.');
+      }
+    });
+  </script>
+</body>
+</html>
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dietary Supplement Recommendation Questionnaire</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      margin: 40px;
+    }
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+    }
+    fieldset {
+      border: 1px solid #ccc;
+      margin: 20px 0;
+      padding: 15px;
+      border-radius: 5px;
+    }
+    legend {
+      font-weight: bold;
+      padding: 0 5px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    input[type="radio"],
+    input[type="checkbox"] {
+      margin-right: 5px;
+    }
+    button {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      background-color: #28a745;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Dietary Supplement Recommendation Questionnaire</h1>
+    <form id="healthForm" action="/submit_health_form" method="POST">
+      <fieldset>
+        <legend>Personal Information</legend>
+        <div class="form-group">
+          <label for="age">Age:</label>
+          <input type="number" id="age" name="age" required />
+        </div>
+        <div class="form-group">
+          <label for="gender">Gender:</label>
+          <select id="gender" name="gender" required>
+            <option value="">Select your gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="non-binary">Non-binary</option>
+            <option value="prefer-not-to-say">Prefer not to say</option>
+          </select>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Health & Medical History</legend>
+        <div class="form-group">
+          <label for="medical-conditions">Medical Conditions:</label>
+          <textarea id="medical-conditions" name="medical_conditions" rows="3" placeholder="List any medical conditions or chronic health issues"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="medications">Medications & Supplements:</label>
+          <textarea id="medications" name="medications" rows="3" placeholder="List any prescription medications or supplements you are currently taking"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="allergies">Allergies & Sensitivities:</label>
+          <textarea id="allergies" name="allergies" rows="2" placeholder="List any allergies or sensitivities"></textarea>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Lifestyle & Diet</legend>
+        <div class="form-group">
+          <label for="dietary-habits">Dietary Habits:</label>
+          <select id="dietary-habits" name="dietary_habits" required>
+            <option value="">Select your dietary habits</option>
+            <option value="omnivorous">Omnivorous</option>
+            <option value="vegetarian">Vegetarian</option>
+            <option value="vegan">Vegan</option>
+            <option value="pescatarian">Pescatarian</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Physical Activity Level:</label>
+          <input type="radio" id="sedentary" name="activity_level" value="sedentary" required />
+          <label for="sedentary" style="display:inline;">Sedentary</label><br />
+          <input type="radio" id="lightly-active" name="activity_level" value="lightly_active" />
+          <label for="lightly-active" style="display:inline;">Lightly Active</label><br />
+          <input type="radio" id="moderately-active" name="activity_level" value="moderately_active" />
+          <label for="moderately-active" style="display:inline;">Moderately Active</label><br />
+          <input type="radio" id="very-active" name="activity_level" value="very_active" />
+          <label for="very-active" style="display:inline;">Very Active</label>
+        </div>
+        <div class="form-group">
+          <label for="substance-use">Substance Use:</label>
+          <textarea id="substance-use" name="substance_use" rows="2" placeholder="Describe your smoking or alcohol consumption habits"></textarea>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Health Goals & Concerns</legend>
+        <div class="form-group">
+          <label for="primary-goals">Primary Health Goals:</label>
+          <textarea id="primary-goals" name="primary_goals" rows="3" placeholder="What are your primary health and wellness goals?"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="nutritional-deficiencies">Nutritional Deficiencies:</label>
+          <textarea id="nutritional-deficiencies" name="nutritional_deficiencies" rows="2" placeholder="List any known nutritional deficiencies"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="specific-symptoms">Specific Symptoms:</label>
+          <textarea id="specific-symptoms" name="specific_symptoms" rows="3" placeholder="Describe any symptoms such as fatigue, poor sleep, or stress"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="expectations">Expectations from Supplements:</label>
+          <textarea id="expectations" name="expectations" rows="3" placeholder="What are your expectations from dietary supplements?"></textarea>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Additional Information</legend>
+        <div class="form-group">
+          <label for="dietary-restrictions">Dietary Restrictions:</label>
+          <textarea id="dietary-restrictions" name="dietary_restrictions" rows="2" placeholder="List any dietary restrictions (e.g., gluten-free, dairy-free)"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="hydration">Daily Water Intake (in cups or liters):</label>
+          <input type="text" id="hydration" name="hydration" placeholder="e.g., 8 cups or 2 liters" />
+        </div>
+        <div class="form-group">
+          <label for="other-details">Other Relevant Details:</label>
+          <textarea id="other-details" name="other_details" rows="3" placeholder="Any additional information about your lifestyle or health"></textarea>
+        </div>
+      </fieldset>
+
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+  <script>
+    document.getElementById('healthForm').addEventListener('submit', async function (e) {
+      e.preventDefault(); // Prevent the default form submission
+
+      // Collect form data
+      const formData = {
+        age: parseInt(document.getElementById('age').value),
+        gender: document.getElementById('gender').value,
+        medical_conditions: document.getElementById('medical-conditions').value,
+        medications: document.getElementById('medications').value,
+        allergies: document.getElementById('allergies').value,
+        dietary_habits: document.getElementById('dietary-habits').value,
+        activity_level: document.querySelector('input[name="activity_level"]:checked').value,
+        substance_use: document.getElementById('substance-use').value,
+        primary_goals: document.getElementById('primary-goals').value,
+        nutritional_deficiencies: document.getElementById('nutritional-deficiencies').value,
+        specific_symptoms: document.getElementById('specific-symptoms').value,
+        expectations: document.getElementById('expectations').value,
+        dietary_restrictions: document.getElementById('dietary-restrictions').value,
+        hydration: document.getElementById('hydration').value,
+        other_details: document.getElementById('other-details').value
+      };
+
+      // Send the data as JSON to the backend
+      try {
+        const response = await fetch('/submit_health_form', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+        // Show a pop-up confirmation
+        alert('Form submitted successfully! Redirecting to recommendations...');
+        // Redirect to the /recommendations page
+        window.location.href = '/recommendations';
+      } else {
+        const result = await response.json();
+        alert(`Error: ${result.detail}`);
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('An error occurred while submitting the form.');
+    }
+    });
+  </script>
+</body>
+</html> -->
