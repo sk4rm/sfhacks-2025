@@ -1,7 +1,5 @@
 import pathlib
-from typing import Dict, Any
 
-import certifi
 from fastapi import FastAPI, APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -10,10 +8,9 @@ import json
 import re, os
 from datetime import datetime
 from bson.objectid import ObjectId
-from pymongo import MongoClient
-from pymongo.server_api import ServerApi
 
 # MongoDB related imports (ensure these are set up correctly in your project)
+from configuration import collection
 from database.schemas import all_tasks
 from database.models import Todo
 
@@ -33,9 +30,8 @@ model = genai.GenerativeModel("gemini-2.0-flash")
 app = FastAPI()
 templates = Jinja2Templates(directory=pathlib.Path(__file__).parent / "templates")
 router = APIRouter()
-
+app.include_router(router)
 # ---------------- Gemini Functionality ----------------
-
 
 # #####FETCHING DATA FROM MONGODB#####
 @router.get("/fetch_test2_data")
@@ -53,116 +49,186 @@ async def fetch_test2_data():
         raise HTTPException(status_code=500, detail=f"Error fetching data from MongoDB: {e}")
 # #######################
 
-@router.get("/recommendations/{id}", response_class=HTMLResponse)
-async def get_recommendations(request: Request, id: int):
+
+
+###Handling form submission######
+@router.post("/submit_health_form")
+async def submit_health_form(data: dict):
     """
-    Fetches health data for a specific user_id from MongoDB, generates supplement recommendations
-    using Gemini AI, and renders an HTML page with the recommendations.
+    Handles the submission of the health form and processes the data.
     """
-    # Create a new client and connect to the server
-    client = MongoClient(os.getenv("MONGODB_KEY"), tlsCAFile=certifi.where(), server_api=ServerApi('1'))
-
-    # create database and the collection
-    db = client.SF2025
-    collection = db['test3_data']
-
     try:
-        # Fetch data for the specific user_id from the MongoDB collection
-        health_case = collection.find_one({"id": id}, {"_id": 0})  # Exclude the _id field if not needed
-        if not health_case:
-            raise HTTPException(status_code=404, detail=f"No data found for user_id {id}.")
+        # Log the received data
+        print("Received data:", data)
+
+        # Delete all previous data in the collection
+        collection.delete_many({})  # Deletes all documents in the collection
+
+        # Save the data to MongoDB
+        result = collection.insert_one(data)
+
+        # Return a success response
+        return {"status_code": 200, "message": "Form submitted successfully", "id": str(result.inserted_id)}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching data from MongoDB: {e}")
-
-    # Build the prompt using the case data
-    prompt = (
-        "Please act like a medical advisor since I just use the information you provide as a reference. "
-        "Based on the following health data, what are daily supplements that you would recommend (provide only one to explain each supplement you suggest and also focus only on supplements no extra text)?\n"
-    )
-    for key, value in health_case.items():
-        prompt += f"- {key.replace('_', ' ').title()}: {value}\n"
-
-    # Generate recommendations from Gemini
-    try:
-        response = model.generate_content(prompt)
-        supplements = response.text.strip().splitlines()
-
-        # Clean up the list items by removing bullet points and markdown formatting
-        supplements = [re.sub(r'^\*\*\s?|\*\*\s?', '', supp.strip()) for supp in supplements]
-        supplements = [re.sub(r'^\* ', '', supp) for supp in supplements]
-
-        recommendations = {
-            'id': id,
-            'supplements': supplements
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error generating recommendations: {e}")
-
-    # Render the recommendations using an HTML template (index.html)
-    return templates.TemplateResponse("index.html", {"request": request, "recommendations": [recommendations]})
+        raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+########dispay health form in root######
+# filepath: /Users/hlathirinaing/CS/GitHub/sfhacks-2025/main.py
+@router.get("/", response_class=HTMLResponse)
+async def display_health_form(request: Request):
+    """
+    Displays the health form HTML page.
+    """
+    return templates.TemplateResponse("health_form.html", {"request": request})
 
 
 @router.get("/recommendations", response_class=HTMLResponse)
 async def get_recommendations(request: Request):
-    """
-    Reads health data from a JSON file, generates supplement recommendations
-    using Gemini AI, and renders an HTML page with the recommendations.
-    """
-    # Read data from the data.json file
-    with open('database/data.json', 'r') as file:
-        health_cases = json.load(file)
+    try:
+        # Fetch all documents without any filter
+        health_cases = list(collection.find({}))
+        if not health_cases:
+            return templates.TemplateResponse("index.html", {
+                "request": request,
+                "recommendations": [],
+                "message": "No health cases found in the database."
+            })
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching data from MongoDB: {e}")
 
-    # try:
-    #     # Fetch data from the MongoDB collection
-    #     health_cases = list(collection.find({"is_deleted": False}, {"_id": 0}))  # Exclude the _id field if not needed
-    #     if not health_cases:
-    #         return templates.TemplateResponse("index.html", {"request": request, "recommendations": [], "message": "No health cases found in the database."})
-    # except Exception as e:
-    #     raise HTTPException(status_code=500, detail=f"Error fetching data from MongoDB: {e}")
-
-    case_num = 0
     recommendations = []
-    
-    for case in health_cases:
-        case_num += 1
-        # Build the prompt using the case data
+    # Process each health case to generate recommendations
+    for i, case in enumerate(health_cases, start=1):
+        case.pop('_id', None)
         prompt = (
             "Please act like a medical advisor since I just use the information you provide as a reference. "
-            "Based on the following health data, what are daily supplements that you would recommend (provide only one to explain each supplement you suggest and also focus only on supplements no extra text)?\n"
+            "Based on the following health data, what are daily supplements that you would recommend "
+            "(provide only one to explain each supplement you suggest and focus only on supplements, no extra text)?\n"
         )
         for key, value in case.items():
             prompt += f"- {key.replace('_', ' ').title()}: {value}\n"
 
-        # Generate recommendations from Gemini
-        response = model.generate_content(prompt)
-        supplements = response.text.strip().splitlines()
+        try:
+            response = model.generate_content(prompt)
+            supplements = response.text.strip().splitlines()
 
-        # Clean up the list items by removing bullet points and markdown formatting
-        supplements = [re.sub(r'^\*\*\s?|\*\*\s?', '', supp.strip()) for supp in supplements]
-        supplements = [re.sub(r'^\* ', '', supp) for supp in supplements]
+            # Filter out unwanted lines:
+            # Remove any line starting with "Case" (like "Case 1:")
+            # and any line starting with an introductory phrase like "Okay, based on"
+            supplements = [
+                line for line in supplements 
+                if not re.match(r"^Case\s*\d+:", line.strip()) 
+                   and not line.strip().lower().startswith("okay, based on")
+            ]
+            
+            # Further clean up bullet points and markdown formatting
+            supplements = [re.sub(r'^\*\*\s?|\*\*\s?', '', supp.strip()) for supp in supplements]
+            supplements = [re.sub(r'^\* ', '', supp) for supp in supplements]
 
-        recommendations.append({
-            'case_num': case_num,
-            'supplements': supplements
-        })
+            recommendations.append({
+                # Remove case numbering if not needed in the output:
+                'supplements': supplements
+            })
+        except Exception as e:
+            print(f"Error processing case {i}: {e}")
+            continue
 
-    # Render the recommendations using an HTML template (index.html)
-    print(recommendations)
-    return templates.TemplateResponse("index.html", {"request": request, "recommendations": recommendations})
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "recommendations": recommendations
+    })
+
+
+
+# @router.get("/recommendations/{id}", response_class=HTMLResponse)
+# async def get_recommendations(request: Request, id: int):
+#     """
+#     Fetches health data for a specific user_id from MongoDB, generates supplement recommendations
+#     using Gemini AI, and renders an HTML page with the recommendations.
+#     """
+#     try:
+#         # Fetch data for the specific user_id from the MongoDB collection
+#         health_case = collection.find_one({"id": id}, {"_id": 0})  # Exclude the _id field if not needed
+#         if not health_case:
+#             raise HTTPException(status_code=404, detail=f"No data found for id {id}.")
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=f"Error fetching data from MongoDB: {e}")
+
+#     # Build the prompt using the case data
+#     prompt = (
+#         "Please act like a medical advisor since I just use the information you provide as a reference. "
+#         "Based on the following health data, what are daily supplements that you would recommend (provide only one to explain each supplement you suggest and also focus only on supplements no extra text)?\n"
+#     )
+#     for key, value in health_case.items():
+#         prompt += f"- {key.replace('_', ' ').title()}: {value}\n"
+
+#     # Generate recommendations from Gemini
+#     try:
+#         response = model.generate_content(prompt)
+#         supplements = response.text.strip().splitlines()
+
+#         # Clean up the list items by removing bullet points and markdown formatting
+#         supplements = [re.sub(r'^\*\*\s?|\*\*\s?', '', supp.strip()) for supp in supplements]
+#         supplements = [re.sub(r'^\* ', '', supp) for supp in supplements]
+
+#         recommendations = {
+#             'id': id,
+#             'supplements': supplements
+#         }
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=f"Error generating recommendations: {e}")
+
+#     # Render the recommendations using an HTML template (index.html)
+#     return templates.TemplateResponse("index.html", {"request": request, "recommendations": [recommendations]})
+
+
+
+# #### GETTING ALL USERS DATA FROM JSON FILE AND DISPLAYING ALL CASES OUTPUT ######
+# @router.get("/recommendations", response_class=HTMLResponse)
+# async def get_recommendations(request: Request):
+#     """
+#     Reads health data from a JSON file, generates supplement recommendations
+#     using Gemini AI, and renders an HTML page with the recommendations.
+#     """
+#     try:
+#         # Fetch data from the MongoDB collection
+#         health_cases = list(collection.find({"is_deleted": False}, {"_id": 0}))  # Exclude the _id field if not needed
+#         if not health_cases:
+#             return templates.TemplateResponse("index.html", {"request": request, "recommendations": [], "message": "No health cases found in the database."})
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=f"Error fetching data from MongoDB: {e}")
+
+#     case_num = 0
+#     recommendations = []
+    
+#     for case in health_cases:
+#         case_num += 1
+#         # Build the prompt using the case data
+#         prompt = (
+#             "Please act like a medical advisor since I just use the information you provide as a reference. "
+#             "Based on the following health data, what are daily supplements that you would recommend (provide only one to explain each supplement you suggest and also focus only on supplements no extra text)?\n"
+#         )
+#         for key, value in case.items():
+#             prompt += f"- {key.replace('_', ' ').title()}: {value}\n"
+
+#         # Generate recommendations from Gemini
+#         response = model.generate_content(prompt)
+#         supplements = response.text.strip().splitlines()
+
+#         # Clean up the list items by removing bullet points and markdown formatting
+#         supplements = [re.sub(r'^\*\*\s?|\*\*\s?', '', supp.strip()) for supp in supplements]
+#         supplements = [re.sub(r'^\* ', '', supp) for supp in supplements]
+
+#         recommendations.append({
+#             'case_num': case_num,
+#             'supplements': supplements
+#         })
+
+#     # Render the recommendations using an HTML template (index.html)
+#     print(recommendations)
+#     return templates.TemplateResponse("index.html", {"request": request, "recommendations": recommendations})
 
 # ---------------- MongoDB Endpoints ----------------
 @router.get("/get_todos")
@@ -215,49 +281,13 @@ async def delete_task(task_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Task deletion failed: {e}")
 
-
-@router.get("/")
-async def root(request: Request):
-    client = MongoClient(os.getenv("MONGODB_KEY"), tlsCAFile=certifi.where(), server_api=ServerApi('1'))
-
-    # create database and the collection
-    db = client.SF2025
-    collection = db['test3_data']
-    cursor = collection.find().sort({ "id": -1 }).limit(1)
-    last_id = cursor.next()["id"]
-    return templates.TemplateResponse("health_form.html", {"request": request, "last_id": last_id})
-
-
-@router.post("/")
-async def submit_health_form(form_data: Dict[Any, Any]):
-    # Create a new client and connect to the server
-    client = MongoClient(os.getenv("MONGODB_KEY"), tlsCAFile=certifi.where(), server_api=ServerApi('1'))
-
-    # create database and the collection
-    db = client.SF2025
-    collection = db['test3_data']
-
-    # Load JSON data
-    with open(pathlib.Path(__file__).parent / "database" / "data.json", 'r') as file:
-        file_data = json.load(file)
-
-    # Update documents in the collection
-    for document in file_data:
-        # Assuming 'id' is the unique identifier for each document
-        identifier = document['id']
-        # This will replace the document with the same id or insert a new one if it doesn't exist
-        collection.replace_one({'id': identifier}, document, upsert=True)
-
-    return form_data
-
-
 # Include the MongoDB router in the main FastAPI app
 app.include_router(router)
 
 # ---------------- Application Startup ----------------
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
 
 
 #------------------------------------------------------------------------------------------------------------------------
