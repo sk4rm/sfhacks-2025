@@ -1,63 +1,29 @@
-from dotenv import load_dotenv
 import os
 import pathlib
 
-from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
-
+from dotenv import load_dotenv
 from google import genai
-
 import xml.etree.ElementTree as ET
 
-import models
 from models import DailyAverageRecord
 
-#
-# Environmental variables
-#
-
 load_dotenv()
-ATLAS_DB_USERNAME = os.getenv("ATLAS_DB_USERNAME")
-ATLAS_DB_PASSWORD = os.getenv("ATLAS_DB_PASSWORD")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GEMINI_MODEL = os.getenv("GEMINI_MODEL")
 
-URI = f"mongodb+srv://{ATLAS_DB_USERNAME}:{ATLAS_DB_PASSWORD}@sfhacks-2025-dev.3lwtvjo.mongodb.net/?retryWrites=true&w=majority&appName=sfhacks-2025-dev"
 
-#
-# API connections
-#
+def generate_json(xml_in, json_out):
+    """
+    Parse and process Apple HealthKit data exported in XML
+    :param xml_in: The path to the XML file containing data from Apple HealthKit
+    :param json_out: The path to the JSON file to be generated
+    """
+    tree = ET.parse(xml_in)
+    root = tree.getroot()
+    daily_averages = {}
 
-# mongo = MongoClient(URI, server_api=ServerApi("1"))
-#
-# try:
-#     mongo.admin.command("ping")
-#     print("Pinged your deployment. You successfully connected to MongoDB!")
-# except Exception as e:
-#     print(e)
-#     exit(1)
-
-genai = genai.Client(api_key=GEMINI_API_KEY)
-prompt = """Analyse the following health data export from Apple HealthKit.
-Look out for potential trends that may indicate any deficiency or future health risks.
-Then, suggest supplements that could help address those deficiencies.
-The user wants personalized suggestions on health supplements to improve their health based *specifically* on this data summary.
-Focus on trends, consistency, and suggest realistic ways to maintain or better their health.
-Keep the tone encouraging and supportive.
-IMPORTANT: Do NOT give medical advice. Frame suggestions as general wellness tips related to health. Output should be formatted using Markdown."""
-
-#
-# Parse and process Apple HealthKit data exported in XML
-#
-
-file = pathlib.Path(__file__).parent / "data" / "export" / "apple_health_export" / "export.xml"
-tree = ET.parse(file)
-root = tree.getroot()
-dailyAverages = {}
-
-def main():
     for element in root.iter("Record"):
-        endDate = element.get("endDate").split(" ")[0]
+        end_date = element.get("endDate").split(" ")[0]
 
         value = element.get("value")
         if not value.replace(".", "", 1).isdigit():
@@ -69,28 +35,39 @@ def main():
 
         unit = element.get("unit")
 
-        key = f"{endDate}:{identifier}"
-        if not dailyAverages.get(key):
-            dailyAverages[key] = DailyAverageRecord(identifier, unit, endDate)
-        dailyAverages[key].update(float(value))
+        key = f"{end_date}:{identifier}"
+        if not daily_averages.get(key):
+            daily_averages[key] = DailyAverageRecord(identifier, unit, end_date)
+        daily_averages[key].update(float(value))
 
-    processed_file = pathlib.Path(__file__).parent / "data" / "processed.txt"
-    with open(processed_file, "w") as file:
+    with open(json_out, "w") as outfile:
         output = ""
-        for key in dailyAverages.keys():
-            output += f"{dailyAverages[key]}\n"
-        file.write(output)
+        for key in daily_averages.keys():
+            output += f"{daily_averages[key]}\n"
+        outfile.write(output)
 
-    #
-    # Upload files to Gemini for analysis
-    #
+
+def gemini_suggest(json_path, api_key=GEMINI_API_KEY):
+    """
+    Upload files to Gemini for analysis
+
+    :param json_path: The path to the data JSON file
+    :param api_key: The API key to use
+    """
+    client = genai.Client(api_key=api_key)
+    prompt = """Analyse the following health data export from Apple HealthKit.
+    Look out for potential trends that may indicate any deficiency or future health risks.
+    Then, suggest supplements that could help address those deficiencies.
+    The user wants personalized suggestions on health supplements to improve their health based *specifically* on this data summary.
+    Focus on trends, consistency, and suggest realistic ways to maintain or better their health.
+    Keep the tone encouraging and supportive.
+    IMPORTANT: Do NOT give medical advice. Frame suggestions as general wellness tips related to health. Output should be formatted using Markdown."""
 
     try:
-        xml = genai.files.upload(file=processed_file)
-        processed_file.unlink()
-        response = genai.models.generate_content_stream(
+        uploaded_file = client.files.upload(file=json_path)
+        response = client.models.generate_content_stream(
             model=GEMINI_MODEL,
-            contents=[prompt, xml]
+            contents=[prompt, uploaded_file]
         )
     except Exception as e:
         print(e)
@@ -99,5 +76,15 @@ def main():
     for chunk in response:
         print(chunk.text, end="")
 
+
 if __name__ == "__main__":
-    main()
+    xml_path = pathlib.Path(__file__).parent / "data" / "export" / "apple_health_export" / "export.xml"
+    json_path = pathlib.Path(__file__).parent / "data" / "data.txt"
+
+    with open(xml_path, "r") as file:
+        generate_json(
+            xml_in=xml_path,
+            json_out=json_path
+        )
+
+        gemini_suggest(json_path, api_key=GEMINI_API_KEY)
